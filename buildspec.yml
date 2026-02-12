@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+       nodejs: 24.13.1
+  pre_build:
+    commands:
+      - echo "pre build"
+  build:
+    commands:
+      - mkdir -p nodejs/node24
+      - mv package-lock.json package.json ./nodejs/node24
+      - cd nodejs/node24
+      - npm install
+      - rm package-lock.json package.json
+      - ls -al
+      # - echo $CODEBUILD_SRC_DIR
+      - cd ${CODEBUILD_SRC_DIR}
+      - pwd
+      - zip -r layer-${CODEBUILD_BUILD_NUMBER}.zip nodejs
+      - ls -l
+  post_build:
+    commands:
+      - echo "post build"
+      
+artifacts:
+  files:
+    - layer-${CODEBUILD_BUILD_NUMBER}.zip
